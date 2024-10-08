@@ -28,11 +28,14 @@ The `sentence_level` data is the benchmarking data for context faithfulness trac
 
 The `instance_level` data only contains the prompt and context and is used only for decoding testing.
 
+We also release the model outputs under the folder `data/rag_outputs`. These outputs will be used for the offline evaluation of SynCheck.
+
 #### Setup Environment
 
 
 #### Install AlignScore
 
+Please follow [this instruction](https://github.com/yuh-zha/AlignScore?tab=readme-ov-file#installation) to install AlignScore from source. Our evaluation additionally requires [downloading the AlignScore-base model checkpoint](https://github.com/yuh-zha/AlignScore?tab=readme-ov-file#checkpoints).
 
 ## Offline Feature Calculation
 
