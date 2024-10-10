@@ -34,6 +34,7 @@ To prepare the data, run the following commands
 cd data/instance_level ; tar -xzvf * 
 cd ragtruth/task_model_split ; python *py
 cd ../train_test_split ; python *py
+cd ../all_split ; python *py
 cd ../../../rag_outputs ; tar -xzvf * 
 cd ../sentence_level ; tar -xzvf * ; cd ../..
 ```
