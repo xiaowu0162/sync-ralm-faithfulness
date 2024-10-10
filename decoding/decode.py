@@ -66,7 +66,6 @@ def decode_a_sentence(model, tokenizer, rag_prompt, previous_pred_sents, logprob
     """
     Decode a sentence as well as return the token-wise contrastive logits
     """
-    # todo: add temperature and sample size
     n_logprobs = len(tokenizer)-logprob_num_offset
     assert n_logprobs == 32000
     
@@ -119,7 +118,6 @@ def get_no_rag_logits(model, tokenizer, no_rag_prompt, previous_pred_sents, cur_
     text_rag = ''.join(previous_pred_sents)
     
     # get no RAG logits - implementation 1
-    # print('Getting no rag logits...', end='')
     logits_no_rag = []
     next_step_prompt_no_rag = no_rag_prompt + text_rag + cur_pred_sent
     sampling_params_no_rag = SamplingParams(temperature=0, top_p=1, prompt_logprobs=n_logprobs, max_tokens=1)
@@ -168,7 +166,6 @@ def _get_acts(example, tokenizer, model, layers, hook_handles, keep_length=1):
     model_output = model(input_ids, attention_mask=attention_masks, labels=labels, output_hidden_states=True)
     
     for layer, hook in zip(layers, hook_handles):
-        # acts[layer].append(hook.out[:, prefix_length:])
         acts[layer].append(hook.out[:, -keep_length:])
         
     for layer, act in acts.items():
@@ -426,9 +423,6 @@ def cad_decoding(args, tokenizer, model, input_entry, out_log=None):
     sampling_params = SamplingParams(temperature=0, top_p=1, logprobs=n_logprobs, max_tokens=1)
     while len(output_tokens) < args.cad_max_length:
             
-        #n_logprobs = len(tokenizer)-logprob_num_offset
-        #assert n_logprobs == 32000
-        
         text_rag = tokenizer.decode(output_tokens, skip_special_tokens=True)
         next_step_prompt_rag = processed_prompt + text_rag
         next_segment = model.generate([next_step_prompt_rag], sampling_params, use_tqdm=False)[0]
@@ -577,5 +571,4 @@ def main(args):
 if __name__ == "__main__":
     args = parse_args()
     print(args)
-    
     main(args)

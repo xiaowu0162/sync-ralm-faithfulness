@@ -1,9 +1,6 @@
 # sync-ralm-faithfulness
 Official Repository for [Synchronous Faithfulness Monitoring for Trustworthy Retrieval-Augmented Generation](https://arxiv.org/abs/2406.13692) (EMNLP 2024 Main)
 
-<span style="color:red">**Work in progress. We expect the data and code release to be done by 2024/10/15.**</span>
-
-
 ## Directory Structure
 
 ```
@@ -41,6 +38,14 @@ cd ../sentence_level ; tar -xzvf * ; cd ../..
 
 #### Setup Environment
 
+We recommend using a conda environment for the project. You may follow the steps below to set up.
+```
+conda create -n syncheck python=3.9
+conda activate syncheck
+pip install torch==2.1.2 torchvision==0.16.2 torchaudio==2.1.2 --index-url https://download.pytorch.org/whl/cu121
+pip install -r requirements.txt
+```
+We have tested this environment on a Linux machine with CUDA 12.1. If you use a different platform, you may need to modify the requirements.
 
 #### Install AlignScore
 
@@ -109,8 +114,44 @@ We also provide the implementation for the other baselines that you may run. We 
 
 ## FOD and Baselines
 
-#### Running FOD 
+#### Running FOD and other baselines
 
-#### Running CAD and other baselines 
+FOD calculates the features on-the-fly during decoding, feeds the features into a pre-trained SynCheck checkpoint, and leverages SynCheck's outputs to guide the direction of decoding. The only offline feature is the activations on the train sets, which is required to compute LID. To run FOD, 
+* Make sure you compute the feature 1 in the offline features.
+* `cd decoding`
+* `bash run_fod.sh task model beam_size sample_size_per_round temperature start_beam_search_syncheck_threshold stop_beam_threshold`
+    * `task` could be `QA`, `Summary`, `Data2txt`, `bio`, `famous-100`, `famous-100-anti-v2`.
+    * `model` could be `llama-2-7b-chat` or `mistral-7B-instruct`. 
+    * `beam_size` is the K in the paper. We used 2 for our experiments.
+    * `sample_size_per_round` is the S in the paper. We used 6 for our experiments.
+    * `temperature` is for proposing the next sentence continuation. We used 0.7 in the paper.
+    * `start_beam_search_syncheck_threshold` is the threshold on SynCheck's scores when backtrack is triggered. We used 0.8 in the paper.
+    * `stop_beam_threshold` is the threshold for pruning out example proposals. We used 0.7 in the paper.
+
+We also provide the implementation for CAD, the major baseline we compared with in the paper. To run CAD, use the command `bash run_cad.sh task model cad_alpha`.
 
 #### Faithfulness-Informativeness Evaluation
+
+To evaluate the outputs from the decoding algorithms, follow these steps:
+* Install FActScore by following the instructions [here](https://github.com/shmsw25/FActScore).
+* `cd decoding/evaluation`
+* `bash eval.sh task pred_file`
+
+The decoding script will decompose the outputs into propositions and compare each proposition against the retrieved context using the llama+npm method proposed in the FActScore paper. Finally, the script will print out the fact-level accuracy (faithfulness) and the number of decomposed atomic facts (informativeness).
+
+
+## Citation
+
+If you find the work useful, please cite:
+
+```
+@article{wu2024syncheck,
+      title={Synchronous Faithfulness Monitoring for Trustworthy Retrieval-Augmented Generation}, 
+      author={Di Wu and Jia-Chen Gu and Fan Yin and Nanyun Peng and Kai-Wei Chang},
+      year={2024},
+      eprint={2406.13692},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2406.13692}, 
+}
+```

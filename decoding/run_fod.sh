@@ -63,7 +63,7 @@ else
 fi
 
 # alignscore
-align_score_model_path='${HOME_DIR}/AlignScore/checkpoints/AlignScore-base.ckpt'
+align_score_model_path="${HOME_DIR}/AlignScore/checkpoints/AlignScore-base.ckpt"
 
 python decode.py \
     --task ${task} \
