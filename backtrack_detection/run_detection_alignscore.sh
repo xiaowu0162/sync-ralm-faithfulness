@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 export PYTHONIOENCODING=utf-8
-export PYTHONPATH=${PYTHONPATH}:`realpath ..`
 
 root_dir=`realpath ..`
+export PYTHONPATH=${PYTHONPATH}:${root_dir}
 
 task=$1                     # bio famous-100 famous-100-anti-v2 QA Summary Data2txt
 model=$2                    # llama-2-7b-chat mistral-7B-instruct
@@ -13,7 +13,6 @@ metric_model=${root_dir}/AlignScore/checkpoints/AlignScore-base.ckpt
 
 out_dir=logs/${task}_${split}/alignscore/
 mkdir -p ${out_dir}
-
 
 data_dir="${root_dir}/data/sentence_level/${task}/"
 sentence_file=${data_dir}/${model}.jsonl
